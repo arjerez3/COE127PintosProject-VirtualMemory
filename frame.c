@@ -9,7 +9,7 @@ static size_t frame_size;		//Size of frame in bytes
 
 static struct lock scan_lock;		//Lock for scanning
 
-//Initialize frame table
+//Initialize a frame
 void frame_init()
 {
 	void *base;		//Iterative address for each frame
@@ -32,4 +32,31 @@ void frame_init()
 		frame_inst->page = NULL;
 	}
 	
+}
+
+//Allocate a frame for a given page
+try_frame_alloc_and_lock(struct page * page)
+{
+	size_t i;
+	
+	lock_acquire(&scan_lock);
+
+	//Find a free frame by iterating through the frame table
+	for(i = 0; i < frame_size; i++)
+	{
+		struct frame * frame_inst = &frame_table[i];
+		//If the frame is locked, skip to next frame
+		if(!lock_try_acquire(&frame_inst->lock))
+			continue;
+		//If the frame instance has no page reference
+		if(frame_inst->page == NULL)
+		{
+			frame_inst->page = page;
+			lock_release(&scan_lock);
+			return frame_inst;
+		}
+		lock_release(&frame_inst->lock);
+	}
+
+	//Implement frame eviction here
 }

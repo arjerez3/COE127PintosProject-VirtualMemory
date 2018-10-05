@@ -10,6 +10,9 @@ struct frame
 	struct page* page;	//Reference to its page
 }
 
-void frame_init();	
+void frame_init(void);	//Accept a void pointer
+
+struct frame * frame_alloc_and_lock(struct page *);
+
 
 #endif
