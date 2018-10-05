@@ -9,7 +9,7 @@
 
 Orlando Lewis D. Bolaton - lewisbolaton@gmail.com
 Alejandro R. Jerez III - arjerez3@gmail.com
-Sophia Alexandra V. Unabia
+Sophia Alexandra V. Unabia - savunabia@gmail.com
 
 ---- PRELIMINARIES ----
 
