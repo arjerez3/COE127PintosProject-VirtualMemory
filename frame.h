@@ -12,7 +12,10 @@ struct frame
 
 void frame_init(void);	//Accept a void pointer
 
+struct frame * try_frame_alloc_and_lock(struct page *);
 struct frame * frame_alloc_and_lock(struct page *);
+
+void frame_lock(struct page *)
 
 
 #endif

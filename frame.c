@@ -35,7 +35,7 @@ void frame_init()
 }
 
 //Allocate a frame for a given page
-try_frame_alloc_and_lock(struct page * page)
+struct frame * try_frame_alloc_and_lock(struct page * page)
 {
 	size_t i;
 	
@@ -60,3 +60,47 @@ try_frame_alloc_and_lock(struct page * page)
 
 	//Implement frame eviction here
 }
+
+//Allocate and lock a frame given a page
+struct frame * frame_alloc_and_lock(struct page * page)
+{
+	size_t try;
+
+	//After three tries
+	for(try = 0; try < 3; try++)
+	{
+		//Try to allocate a frame for the page
+		struct frame * frame_inst = try_frame_alloc_and_lock(page);
+		//If the frame is not locked
+		if(frame_inst != NULL)
+		{
+			ASSERT(lock_held_by_current_thread(&frame_inst->lock));
+			return frame_inst;
+		}
+		timer_msleep(1000);
+	}
+	
+	//If no frame is allocated, return null pointer
+	return NULL;
+}
+
+//Lock a frame
+void frame_lock(struct page * p)
+{
+	//Indicate the frame referred by the given page
+	struct frame * frame_inst = p->frame;
+	//If there is a frame	
+	if(frame_inst != NULL)
+	{
+		lock_acquire(&frame_inst->lock);
+
+		if(frame_inst != p->frame)
+		{
+			//Free the frame
+			lock_release(&frame_inst->lock);
+			ASSERT(p->frame == NULL)
+		}
+	}
+}
+
+
